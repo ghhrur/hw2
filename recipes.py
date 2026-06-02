@@ -1,3 +1,4 @@
+from numbers import Real
 class Ingredient:
     def __init__(self, name: str, quantity: float, unit: str):
         self.name = name
@@ -50,7 +51,7 @@ class Recipe:
     def scale(self, ratio: float):
         if not self.is_valid_ratio(ratio):
             raise ValueError("Коэффициент должен быть положительным")
-        scaled_ingredients = [Ingredient(ingredient.name, ingredient.quantity * ratio,ingredient.unit,) for ingredient in self.ingredients]
+        scaled_ingredients = [Ingredient(ingredient.name, ingredient.quantity * ratio,ingredient.unit) for ingredient in self.ingredients]
         return Recipe(self.title, scaled_ingredients)
 
     def __len__(self):
@@ -87,5 +88,17 @@ class ShoppingList:
     def __add__(self, other: "ShoppingList"):
         comb = ShoppingList()
         for ingredient, recipe_title in self._items + other._items:
-            comb._items.append((Ingredient(ingredient.name,ingredient.quantity,ingredient.unit,),recipe_title,))
+            comb._items.append((Ingredient(ingredient.name,ingredient.quantity,ingredient.unit),recipe_title))
         return comb
+
+class DietaryRecipe(Recipe):
+    def __init__(self, title: str, diet_type: str, ingredients: list[Ingredient] | None = None,):
+        super().__init__(title, ingredients)
+        self.diet_type = diet_type
+
+    def scale(self, ratio: float):
+        scaled_recipe = super().scale(ratio)
+        return DietaryRecipe(scaled_recipe.title, self.diet_type, scaled_recipe.ingredients)
+
+    def __str__(self) -> str:
+        return f"[{self.diet_type}] {super().__str__()}"
