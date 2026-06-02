@@ -1,3 +1,4 @@
+from __future__ import annotations
 from numbers import Real
 class Ingredient:
     def __init__(self, name: str, quantity: float, unit: str):
